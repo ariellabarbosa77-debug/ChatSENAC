@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:primeiro_app/paginas/cadastro.dart';
 import 'package:primeiro_app/paginas/dashboard.dart';
 import 'package:primeiro_app/utilitarios/tipografia.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,423 +14,169 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final emailControlador = TextEditingController();
+  final senhaControlador = TextEditingController();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController senhaController = TextEditingController();
+  Future<void> fazerLogin() async {
+    var url = Uri.http("10.112.4.33", "login");
+    var resposta = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        'email': emailControlador.text,
+        'senha': senhaControlador.text,
+      }),
+    );
 
+    if (resposta.statusCode != 200) {
+      var dados = jsonDecode(resposta.body);
 
-  void verificarLogin() {
-
-    if (emailController.text == "teste@email.com" &&
-        senhaController.text == "123456") {
-
-      Navigator.pushAndRemoveUntil(
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(
-          builder: (context) => const Dashboard(),
-        ),
-            (route) => false,
-      );
-
-    } else {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Email ou senha incorretos!"),
-          backgroundColor: Colors.red,
-        ),
-      );
-
+      ).showSnackBar(SnackBar(content: Text("${dados["message"]}")));
+      return;
     }
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (build) => Dashboard()));
   }
-
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    senhaController.dispose();
-    super.dispose();
-  }
-
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
+      backgroundColor: Colors.white,
       body: SafeArea(
-
         child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(children: [FlutterLogo(size: 18), Text("ChatSENAC")]),
+                SizedBox(height: 32),
 
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 16,
-          ),
+                // Titulos
+                Text("Entre na sua Conta", style: Tipografia.h1),
+                SizedBox(height: 12),
+                Text(
+                  "Coloque o seu email e senha para logar",
+                  style: Tipografia.subtitulo,
+                ),
+                SizedBox(height: 32),
 
-
-          child: Column(
-
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-
-
-            children: [
-
-              // Logo
-              Row(
-                children: [
-
-                  const FlutterLogo(
-                    size: 18,
-                  ),
-
-                  const SizedBox(width: 8),
-
-                  const Text(
-                    "ChatSENAC",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                // Campos
+                Text("Email", style: Tipografia.subtitulo),
+                TextField(
+                  controller: emailControlador,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-
-                ],
-              ),
-
-
-              const SizedBox(height: 20),
-
-
-              Text(
-                "Entre na sua conta",
-                style: Tipografia.h1,
-              ),
-
-
-              const SizedBox(height: 6),
-
-
-              Text(
-                "Coloque o seu email e senha para logar",
-                style: Tipografia.subtitulo,
-              ),
-
-
-              const SizedBox(height: 25),
-
-
-              Text(
-                "Email",
-                style: Tipografia.subtitulo,
-              ),
-
-
-              const SizedBox(height: 6),
-
-
-              TextField(
-
-                controller: emailController,
-
-                decoration: InputDecoration(
-
-                  hintText: "Digite seu email",
-
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-
                 ),
-
-              ),
-
-
-              const SizedBox(height: 13),
-
-
-              Text(
-                "Senha",
-                style: Tipografia.subtitulo,
-              ),
-
-
-              const SizedBox(height: 6),
-
-
-              TextField(
-
-                controller: senhaController,
-
-                obscureText: true,
-
-                decoration: InputDecoration(
-
-                  hintText: "********",
-
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                SizedBox(height: 16),
+                Text("Senha", style: Tipografia.subtitulo),
+                TextField(
+                  controller: senhaControlador,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    suffixIcon: Icon(Icons.visibility_off),
                   ),
-
+                  obscureText: true,
                 ),
-
-              ),
-
-
-              const SizedBox(height: 10),
-
-
-              Text(
-                "Esqueceu a senha?",
-                textAlign: TextAlign.right,
-                style: Tipografia.link,
-              ),
-
-
-              const SizedBox(height: 20),
-
-
-              ElevatedButton(
-
-                onPressed: verificarLogin,
-
-
-                style: ElevatedButton.styleFrom(
-
-                  backgroundColor: Colors.blue,
-
-                  foregroundColor: Colors.white,
-
-
-                  shape: RoundedRectangleBorder(
-
-                    borderRadius: BorderRadius.circular(10),
-
+                SizedBox(height: 16),
+                InkWell(
+                  onTap: () {},
+                  child: Text(
+                    "Esqueceu a senha?",
+                    textAlign: TextAlign.right,
+                    style: Tipografia.link,
                   ),
-
                 ),
-
-
-                child: const Text("Entrar"),
-
-              ),
-
-
-              const SizedBox(height: 15),
-
-
-              const Row(
-
-                children: [
-
-                  Expanded(
-                    child: Divider(),
+                SizedBox(height: 24),
+                // Botões
+                ElevatedButton(
+                  onPressed: fazerLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16),
                   ),
-
-
-                  Padding(
-
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-
-                    child: Text("Ou"),
-
-                  ),
-
-
-                  Expanded(
-                    child: Divider(),
-                  ),
-
-                ],
-
-              ),
-
-
-              const SizedBox(height: 15),
-
-
-              // Google
-
-              ElevatedButton(
-
-                onPressed: () {},
-
-
-                style: ElevatedButton.styleFrom(
-
-                  backgroundColor: Colors.white,
-
-                  foregroundColor: Colors.black,
-
-
-                  side: const BorderSide(
-                    color: Colors.grey,
-                  ),
-
-
-                  shape: RoundedRectangleBorder(
-
-                    borderRadius: BorderRadius.circular(10),
-
-                  ),
-
+                  child: Text("Entrar", style: Tipografia.subtitulo),
                 ),
+                SizedBox(height: 24),
+                Text("Ou", textAlign: TextAlign.center),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 10,
+                    children: [
+                      Image.asset("assets/imagens/google-icon.png", height: 18),
+                      Text("Continuar com Google", style: Tipografia.subtitulo),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
 
-
-                child: Row(
-
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 10,
+                    children: [
+                      Image.asset(
+                        "assets/imagens/facebook-icon.png",
+                        height: 18,
+                      ),
+                      Text(
+                        "Continuar com Facebook",
+                        style: Tipografia.subtitulo,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 54),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-
-
+                  spacing: 6,
                   children: [
-
-                    Image.asset(
-
-                      "assets/imagens/google-icon.png",
-
-                      height: 22,
-
-                      width: 22,
-
+                    Text("Não tem uma conta?", style: Tipografia.subtitulo),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (build) => Cadastro()),
+                        );
+                      },
+                      child: Text("Cadastre-se", style: Tipografia.link),
                     ),
-
-
-                    const SizedBox(width: 10),
-
-
-                    const Text(
-                      "Continuar com o Google",
-                    ),
-
                   ],
-
                 ),
-
-              ),
-
-
-              const SizedBox(height: 10),
-
-
-              // Facebook
-
-              ElevatedButton(
-
-                onPressed: () {},
-
-
-                style: ElevatedButton.styleFrom(
-
-                  backgroundColor: Colors.white,
-
-                  foregroundColor: Colors.black,
-
-
-                  side: const BorderSide(
-                    color: Colors.grey,
-                  ),
-
-
-                  shape: RoundedRectangleBorder(
-
-                    borderRadius: BorderRadius.circular(10),
-
-                  ),
-
-                ),
-
-
-                child: Row(
-
-                  mainAxisAlignment: MainAxisAlignment.center,
-
-
-                  children: [
-
-                    Image.asset(
-
-                      "assets/imagens/facebook-icon.png",
-
-                      height: 22,
-
-                      width: 22,
-
-                    ),
-
-
-                    const SizedBox(width: 10),
-
-
-                    const Text(
-                      "Continuar com o Facebook",
-                    ),
-
-                  ],
-
-                ),
-
-              ),
-
-
-              const SizedBox(height: 20),
-
-
-              Row(
-
-                mainAxisAlignment: MainAxisAlignment.center,
-
-
-                children: [
-
-                  Text(
-                    "Não tem uma conta?",
-                    style: Tipografia.subtitulo,
-                  ),
-
-
-                  const SizedBox(width: 5),
-
-
-                  InkWell(
-
-                    onTap: () {
-
-                      Navigator.push(
-
-                        context,
-
-                        MaterialPageRoute(
-
-                          builder: (context) => const Cadastro(),
-
-                        ),
-
-                      );
-
-                    },
-
-
-                    child: Text(
-
-                      "Cadastre-se",
-
-                      style: Tipografia.link,
-
-                    ),
-
-                  ),
-
-                ],
-
-              ),
-
-            ],
-
+              ],
+            ),
           ),
-
         ),
-
       ),
-
     );
-
   }
 }

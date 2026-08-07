@@ -1,264 +1,95 @@
 import 'package:flutter/material.dart';
-import 'package:primeiro_app/utilitarios/tipografia.dart';
+import '../utilitarios/tipografia.dart';
 
-class Cadastro extends StatefulWidget {
+class Cadastro extends StatelessWidget {
   const Cadastro({super.key});
 
   @override
-  State<Cadastro> createState() => _CadastroState();
-}
-
-class _CadastroState extends State<Cadastro> {
-
-  final TextEditingController nomeController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController senhaController = TextEditingController();
-  final TextEditingController confirmarSenhaController =
-  TextEditingController();
-
-
-  void cadastrar() {
-
-    if (nomeController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        senhaController.text.isEmpty ||
-        confirmarSenhaController.text.isEmpty) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Preencha todos os campos!"),
-          backgroundColor: Colors.red,
-        ),
-      );
-
-      return;
-    }
-
-
-    if (senhaController.text != confirmarSenhaController.text) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("As senhas não são iguais!"),
-          backgroundColor: Colors.red,
-        ),
-      );
-
-      return;
-    }
-
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Cadastro realizado com sucesso!"),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-
-    Navigator.pop(context);
-  }
-
-
-  @override
-  void dispose() {
-    nomeController.dispose();
-    emailController.dispose();
-    senhaController.dispose();
-    confirmarSenhaController.dispose();
-
-    super.dispose();
-  }
-
-
-  @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-
-        title: const Text("Cadastro"),
-
-        centerTitle: true,
-
-        elevation: 0,
-      ),
-
-
-      body: SingleChildScrollView(
-
-        padding: const EdgeInsets.all(24),
-
-        child: Column(
-
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-
-          children: [
-
-            const SizedBox(height: 20),
-
-
-            Text(
-              "Crie sua conta",
-              style: Tipografia.h1,
-            ),
-
-
-            const SizedBox(height: 6),
-
-
-            Text(
-              "Preencha os dados abaixo para se cadastrar",
-              style: Tipografia.subtitulo,
-            ),
-
-
-            const SizedBox(height: 25),
-
-
-            Text(
-              "Nome",
-              style: Tipografia.subtitulo,
-            ),
-
-
-            const SizedBox(height: 6),
-
-
-            TextField(
-
-              controller: nomeController,
-
-              decoration: InputDecoration(
-
-                hintText: "Digite seu nome",
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
                 ),
-              ),
-            ),
+                SizedBox(height: 32),
 
+                // Titulos
+                Text("Cadastre-se", style: Tipografia.h1),
+                SizedBox(height: 12),
+                Text("Crie uma conta e continue!", style: Tipografia.subtitulo),
+                SizedBox(height: 32),
 
-            const SizedBox(height: 13),
-
-
-            Text(
-              "Email",
-              style: Tipografia.subtitulo,
-            ),
-
-
-            const SizedBox(height: 6),
-
-
-            TextField(
-
-              controller: emailController,
-
-              decoration: InputDecoration(
-
-                hintText: "Digite seu email",
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                // Campos
+                Text("Nome Completo", style: Tipografia.subtitulo),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-
-
-            const SizedBox(height: 13),
-
-
-            Text(
-              "Senha",
-              style: Tipografia.subtitulo,
-            ),
-
-
-            const SizedBox(height: 6),
-
-
-            TextField(
-
-              controller: senhaController,
-
-              obscureText: true,
-
-              decoration: InputDecoration(
-
-                hintText: "********",
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                SizedBox(height: 16),
+                Text("Email", style: Tipografia.subtitulo),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-
-
-            const SizedBox(height: 13),
-
-
-            Text(
-              "Confirmar senha",
-              style: Tipografia.subtitulo,
-            ),
-
-
-            const SizedBox(height: 6),
-
-
-            TextField(
-
-              controller: confirmarSenhaController,
-
-              obscureText: true,
-
-              decoration: InputDecoration(
-
-                hintText: "********",
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                SizedBox(height: 16),
+                Text("Senha", style: Tipografia.subtitulo),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    suffixIcon: Icon(Icons.visibility_off),
+                  ),
+                  obscureText: true,
                 ),
-              ),
-            ),
-
-
-            const SizedBox(height: 25),
-
-
-            ElevatedButton(
-
-              onPressed: cadastrar,
-
-              style: ElevatedButton.styleFrom(
-
-                backgroundColor: Colors.blue,
-
-                foregroundColor: Colors.white,
-
-                minimumSize: const Size(double.infinity, 50),
-
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                SizedBox(height: 16),
+                Text("Confirmar Senha", style: Tipografia.subtitulo),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    suffixIcon: Icon(Icons.visibility_off),
+                  ),
+                  obscureText: true,
                 ),
-              ),
 
-
-              child: const Text("Cadastrar"),
-
+                // Botões
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text("Cadastrar", style: Tipografia.subtitulo),
+                ),
+              ],
             ),
-
-          ],
+          ),
         ),
       ),
     );
