@@ -1,11 +1,69 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../utilitarios/tipografia.dart';
 
-class Cadastro extends StatelessWidget {
+
+class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
 
   @override
+  State<Cadastro> createState() => _CadastroState();
+}
+
+class _CadastroState extends State<Cadastro> {
+    final nomeControlador = TextEditingController();
+    final emailControlador = TextEditingController();
+    final senhaControlador = TextEditingController();
+    final confirmarSenhaControlador = TextEditingController();
+
+
+    Future fazerCadastro() async {
+      if (senhaControlador.text != confirmarSenhaControlador.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("As senhas não coincidem!"),
+          ),
+        );
+
+        return;
+      }
+      var url = Uri.http("10.112.4.33", "api/cadastro");
+
+      var resposta = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'nome': nomeControlador.text,
+          'email': emailControlador.text,
+          'senha': senhaControlador.text,
+        }),
+      );
+      if (resposta.statusCode != 200) {
+        var dados = jsonDecode(resposta.body);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text("${dados["message"]}"),
+          ),
+        );
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(
+        const SnackBar(content: Text("Cadastro realizado com sucesso!"),
+        ),
+      );
+
+      Navigator.pop(context);
+    }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -35,6 +93,7 @@ class Cadastro extends StatelessWidget {
                 // Campos
                 Text("Nome Completo", style: Tipografia.subtitulo),
                 TextField(
+                  controller: nomeControlador,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -44,6 +103,7 @@ class Cadastro extends StatelessWidget {
                 SizedBox(height: 16),
                 Text("Email", style: Tipografia.subtitulo),
                 TextField(
+                  controller: emailControlador,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -53,6 +113,7 @@ class Cadastro extends StatelessWidget {
                 SizedBox(height: 16),
                 Text("Senha", style: Tipografia.subtitulo),
                 TextField(
+                  controller: senhaControlador,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -62,8 +123,11 @@ class Cadastro extends StatelessWidget {
                   obscureText: true,
                 ),
                 SizedBox(height: 16),
+
                 Text("Confirmar Senha", style: Tipografia.subtitulo),
+
                 TextField(
+                  controller: confirmarSenhaControlador,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -76,7 +140,7 @@ class Cadastro extends StatelessWidget {
                 // Botões
                 SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: fazerCadastro,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,

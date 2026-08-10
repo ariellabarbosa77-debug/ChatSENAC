@@ -17,8 +17,15 @@ class _LoginState extends State<Login> {
   final emailControlador = TextEditingController();
   final senhaControlador = TextEditingController();
 
+  bool isObscure = true;
+  void alterarVisibilidadeSenha() {
+    setState(() {
+      isObscure = !isObscure;
+    });
+  }
+
   Future<void> fazerLogin() async {
-    var url = Uri.http("10.112.4.33", "login");
+    var url = Uri.http("10.112.4.33", "api/login");
     var resposta = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -75,16 +82,23 @@ class _LoginState extends State<Login> {
                 ),
                 SizedBox(height: 16),
                 Text("Senha", style: Tipografia.subtitulo),
+
                 TextField(
                   controller: senhaControlador,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    suffixIcon: Icon(Icons.visibility_off),
+                    suffixIcon: IconButton(onPressed: alterarVisibilidadeSenha,
+                        icon: Icon(
+                          isObscure
+                          ? Icons.visibility_off : Icons.visibility,
+                        ),
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: isObscure,
                 ),
+
                 SizedBox(height: 16),
                 InkWell(
                   onTap: () {},
