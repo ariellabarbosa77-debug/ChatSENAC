@@ -24,8 +24,10 @@ class _LoginState extends State<Login> {
     });
   }
 
+
   Future<void> fazerLogin() async {
-    var url = Uri.http("10.112.4.33", "api/login");
+    const baseurl = String.fromEnvironment("API_URL");
+    var url = Uri.http(baseurl, "api/login");
     var resposta = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
